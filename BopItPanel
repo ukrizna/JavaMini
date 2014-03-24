@@ -1,0 +1,205 @@
+// Class Name: BopItPanel
+// 
+// Author: Padyana Uday Krishna
+// 
+// Collaborators and/or supporting material: SI 543 Class Material
+// 
+// Description of the class: This Class defines a Bop It Panel, checks if it is clicked on and also gives the hits and miss count based on the clicks.
+// 
+// Supplementary files: We need to import selected java.awt files and jawa.swing files
+// 
+// List of errors that can be expected:
+//										
+// Expected score: 150.0. 
+//************************************************************************* 
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.Random;
+import javax.swing.JPanel;
+import javax.swing.JFrame;
+import javax.swing.Timer;
+
+
+public class BopItPanel extends JPanel implements MouseListener, ActionListener {
+
+		private int xPos=10, yPos;
+		private Mole mole;
+		private final int DELAY = 2000;
+		private final int WIDTH_SIZE=625, HEIGHT_SIZE = 625;
+		private Timer t;
+		private final int PROB = 4;
+		private int count = 0;
+		private int sec = 0;
+		private final int NULL = 0, STR_XPOS = 5, STR_YPOS1 = 10, STR_YPOS2 = 25;
+		private boolean set=false;
+
+		
+		public BopItPanel(){
+
+			this.setPreferredSize(new Dimension(WIDTH_SIZE, HEIGHT_SIZE));
+			
+			Random range = new Random();
+			xPos = range.nextInt(WIDTH_SIZE);
+			yPos = range.nextInt(HEIGHT_SIZE);
+			
+			t = new Timer(DELAY, this);
+			t.start();
+			
+			mole = new Mole(xPos, yPos);
+			
+			addMouseListener(this);
+
+		}
+		
+		public void paintComponent (Graphics g){
+	
+		
+			super.paintComponent(g);
+			/* Set the Background Color*/
+			this.setBackground(Color.GREEN);
+			
+		 	/* Display the Score*/
+			g.setColor(Color.black);
+			g.drawString("Catches: "+(mole.getHitCount()),STR_XPOS,STR_YPOS1);
+			g.drawString( "Misses: "+(mole.getMissCount()),STR_XPOS,STR_YPOS2);
+			
+			/* Draw the Mole*/
+			mole.draw(g);
+			
+
+			
+			
+			}
+
+		public void mouseClicked(MouseEvent e) {
+			// TODO Auto-generated method stub
+		
+		}
+
+		public void mouseEntered(MouseEvent arg0) {
+			// TODO Auto-generated method stub
+
+		}
+
+
+		public void mouseExited(MouseEvent arg0) {
+			// TODO Auto-generated method stub
+
+		}
+
+
+		public void mousePressed(MouseEvent e) {
+			
+			/* Check for a Hit or a Miss*/
+			mole.clickedOn(e.getPoint().x, e.getPoint().y);
+			repaint();
+		}
+
+
+		public void mouseReleased(MouseEvent arg0) {
+		
+		}
+
+		public void mouseDragged(MouseEvent e) {
+			
+		}
+
+		public void mouseMoved(MouseEvent e) {
+			
+		}
+
+		public void actionPerformed (ActionEvent event){
+			
+			/*Move the Mole*/
+			mole.move(this.getWidth(), this.getHeight());	
+			repaint();
+			
+			/*Increment a counter of seconds*/
+			sec++;
+			
+			if(PROB==1){
+				mole.setVisible(true);
+			}
+			
+			else{
+				/* Checking if the mole has not been visible in the last 4 seconds*/
+				if(sec <= PROB){
+					
+					/* Checking if the mole has not been visible in the last 4 seconds*/
+					if (set==false){
+						
+						/*Increment a counter*/
+						count++;
+						
+						/* Checking for the Probability set for visibility*/
+						if(count==PROB){
+							
+							/* Make the Mole Visible*/
+							mole.setVisible(true);
+							
+							repaint();
+							
+							//System.out.println("Count"+count);
+							
+							/*Indicate that it is set*/
+							set = true;
+							
+							/*Reset the Count*/
+							Random range = new Random();
+							count = range.nextInt(PROB);
+						}	
+						
+						/* Checking for the Probability set for invisibility*/
+						else{
+							/* Make the Mole Invisible*/
+							mole.setVisible(false);
+							repaint();	
+						}
+						
+					}
+					
+					else if(set==true){
+						/* Make the Mole Invisible*/
+						mole.setVisible(false);
+						repaint();
+					}
+					
+					
+				}
+				
+				else if (sec>PROB){
+					sec = 0;
+					set = false;
+					
+					/* Make the Mole Invisible*/
+					mole.setVisible(false);
+					//repaint();
+					
+				}
+				
+				//repaint();
+				
+			}
+			
+		
+		}
+		
+		public static void main(String[] args) {
+			JFrame frame = new JFrame ("Bop-It Game");
+			frame.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
+			
+			frame.getContentPane().add(new BopItPanel());
+		
+			frame.pack();
+			frame.setVisible(true);
+		}		
+
+}
+
+
