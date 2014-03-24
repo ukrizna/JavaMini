@@ -1,0 +1,4 @@
+JavaMini
+========
+
+Simple Java Projects
